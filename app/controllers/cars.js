@@ -6,6 +6,7 @@ module.exports.getCarById = getCarById;
 module.exports.createCar = createCar;
 module.exports.deleteCar = deleteCar;
 module.exports.updateCar = updateCar;
+module.exports.getUserAndCarById = getUserAndCarById;
 
 function getCars(req, res, next) {
     Cars
@@ -32,14 +33,15 @@ function createCar(req, res, next) {
 }
 
 function getCarById(req, res, next) {
-    Cars.findById(req.params.id, function (err, doc) {
-        return res.json({message: 'GET BY ID - ' + req.params.id, car: doc});
+    Cars.findById(req.params.carId, function (err, doc) {
+        req.resources.carById = doc;
+        next();
     });
 }
 
 function updateCar(req, res, next) {
     Cars.findByIdAndUpdate(
-        {_id: req.params.id},
+        {_id: req.params.carId},
         {model: req.body.model, year: req.body.year},
         function (err, result) {
             if (err) {
@@ -52,7 +54,12 @@ function updateCar(req, res, next) {
 }
 
 function deleteCar(req, res, next) {
-    Cars.findOneAndDelete({'_id': req.params.id}, function (err, result) {
+    Cars.findOneAndDelete({'_id': req.params.carId}, function (err, result) {
         return res.json({deletedCar: result});
     });
+}
+
+function getUserAndCarById(req, res, next) {
+    req.resources.userAndCarById = [req.resources.userById, req.resources.carById];
+    next();
 }

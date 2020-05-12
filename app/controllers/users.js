@@ -15,7 +15,8 @@ function getUsers(req, res, next) {
 
 function getUserById(req, res, next) {
     User.findById(req.params.id, function (err, doc) {
-        return res.json({message: 'GET BY ID - ' + req.params.id, user: doc});
+        req.resources.userById = doc;
+        next();
     });
 }
 
@@ -32,9 +33,9 @@ function createUser(req, res, next) {
 
 function updateUser(req, res, next) {
     User.findByIdAndUpdate(
-        { _id: req.params.id},
-        { name: req.body.name, email: req.body.email },
-        function(err, result) {
+        {_id: req.params.id},
+        {name: req.body.name, email: req.body.email},
+        function (err, result) {
             if (err) {
                 res.send(err);
             } else {
